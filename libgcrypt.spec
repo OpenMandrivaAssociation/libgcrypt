@@ -98,19 +98,21 @@ pushd uclibc
 	--enable-shared \
 	--enable-static \
 	--enable-m-guard
-%make
+
+%make CC=%{__cc}
 popd
 %endif
 
 mkdir -p system
 pushd system
-%configure2_5x \
+%configure \
 	--enable-shared \
 	--enable-static \
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard
+
 %make
 popd
 
