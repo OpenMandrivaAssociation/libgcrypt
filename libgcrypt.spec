@@ -87,6 +87,10 @@ automake -a
 autoconf
 
 %build
+# (tpg) clang workaround
+export CFLAGS="${optflags} -std=gnu89"
+export CXXFLAGS="${optflags} -std=gnu89"
+
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
