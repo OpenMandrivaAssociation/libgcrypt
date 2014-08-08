@@ -88,7 +88,7 @@ autoconf
 
 %build
 # (tpg) clang workaround
-%global optflags %{optflags} -std=gnu89
+%global optflags %{optflags} -std=gnu89 -fheinous-gnu-extensions
 
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
