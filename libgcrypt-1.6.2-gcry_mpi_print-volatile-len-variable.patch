@@ -1,0 +1,13 @@
+diff --git a/mpi/mpicoder.c b/mpi/mpicoder.c
+index 896dda1..8fb9792 100644
+--- a/mpi/mpicoder.c
++++ b/mpi/mpicoder.c
+@@ -680,7 +680,7 @@ _gcry_mpi_print (enum gcry_mpi_format format,
+       /* FIXME: for performance reasons we should put this into
+ 	 mpi_aprint because we can then use the buffer directly.  */
+ 
+-      if (buffer && n > len)
++      if (buffer && n > *(volatile size_t*)&len)
+         return GPG_ERR_TOO_SHORT;
+       if (buffer)
+         {

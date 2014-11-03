@@ -1,26 +1,25 @@
-%define	major	11
+%define	major	20
 %define	libname	%mklibname gcrypt %{major}
 %define	devname	%mklibname gcrypt -d
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
-%bcond_without	check
+%bcond_with	check
 %bcond_without	uclibc
 %bcond_with	crosscompile
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.5.0
-Release:	14
+Version:	1.6.2
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
 Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
-Patch1:		libgcrypt-1.2.0-libdir.patch
-Patch2:		libgcrypt-1.5.0-gcry_mpi_print-volatile-len-variable.patch
-Patch3:		libgcrypt-1.5.0-add-pkgconfig-support.patch 
-Patch4:		libgcrypt-automake-1.13.patch
-Patch5:		libgcrypt-aarch64.patch
+Patch0:		libgcrypt-1.2.0-libdir.patch
+Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
+Patch2:		libgcrypt-1.6.1-leak.patch
+Patch3:		libgcrypt-1.6.2-gcry_mpi_print-volatile-len-variable.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
@@ -87,9 +86,6 @@ automake -a
 autoconf
 
 %build
-# (tpg) clang workaround
-%global optflags %{optflags} -std=gnu89 -fheinous-gnu-extensions
-
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
@@ -102,9 +98,12 @@ pushd uclibc
 	--enable-static \
 	--enable-m-guard
 
-%make CC=%{__cc}
+%make CC=%{uclibc_cc}
 popd
 %endif
+
+# (tpg) clang workaround
+%global optflags %{optflags} -std=gnu89 -fheinous-gnu-extensions
 
 mkdir -p system
 pushd system
@@ -152,9 +151,9 @@ ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/li
 %doc AUTHORS README* NEWS THANKS TODO ChangeLog
 %{_bindir}/*
 %{_includedir}/gcrypt.h
-%{_includedir}/gcrypt-module.h
 %{_libdir}/libgcrypt.a
 %{_libdir}/libgcrypt.so
+%{_mandir}/man1/hmac256*
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libgcrypt.a
 %{uclibc_root}%{_libdir}/libgcrypt.so
@@ -162,4 +161,3 @@ ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/li
 %{_libdir}/pkgconfig/libgcrypt.pc
 %{_datadir}/aclocal/libgcrypt.m4
 %{_infodir}/gcrypt.info*
-

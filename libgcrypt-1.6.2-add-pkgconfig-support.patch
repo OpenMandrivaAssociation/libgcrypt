@@ -1,6 +1,20 @@
---- libgcrypt-1.5.0/configure.ac.pkgconf~	2011-06-29 10:53:22.000000000 +0200
-+++ libgcrypt-1.5.0/configure.ac	2012-10-29 07:34:32.440989710 +0100
-@@ -1201,6 +1201,7 @@ random/Makefile
+From 02ff3af5d31f2a3e8f4e53c556aa8b95dbe3cd55 Mon Sep 17 00:00:00 2001
+From: Alexander Khryukin <alexander@mezon.ru>
+Date: Mon, 3 Nov 2014 22:18:15 +0000
+Subject: [PATCH] pkgconfig support
+
+---
+ configure.ac        |  1 +
+ src/Makefile.am     |  2 ++
+ src/libgcrypt.pc.in | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 35 insertions(+)
+ create mode 100644 src/libgcrypt.pc.in
+
+diff --git a/configure.ac b/configure.ac
+index b08c181..369e5b7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2010,6 +2010,7 @@ random/Makefile
  doc/Makefile
  src/Makefile
  src/gcrypt.h
@@ -8,8 +22,24 @@
  src/libgcrypt-config
  src/versioninfo.rc
  tests/Makefile
---- libgcrypt-1.5.0/src/libgcrypt.pc.in.pkgconf~	2012-10-29 07:34:32.441989724 +0100
-+++ libgcrypt-1.5.0/src/libgcrypt.pc.in	2012-10-29 07:34:32.441989724 +0100
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 2d4800f..e1c1ed4 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -27,6 +27,8 @@ bin_SCRIPTS = libgcrypt-config
+ m4datadir = $(datadir)/aclocal
+ m4data_DATA = libgcrypt.m4
+ include_HEADERS = gcrypt.h
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = libgcrypt.pc
+ 
+ lib_LTLIBRARIES = libgcrypt.la
+ bin_PROGRAMS = dumpsexp hmac256 mpicalc
+diff --git a/src/libgcrypt.pc.in b/src/libgcrypt.pc.in
+new file mode 100644
+index 0000000..cad2e28
+--- /dev/null
++++ b/src/libgcrypt.pc.in
 @@ -0,0 +1,32 @@
 +# Process this file with autoconf to produce a pkg-config metadata file.
 +# Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation
@@ -43,14 +73,6 @@
 +Libs: -L${libdir} -lgcrypt
 +Libs.private: -L${libdir} -lgpg-error
 +Cflags: -I${includedir} 
---- libgcrypt-1.5.0/src/Makefile.am.pkgconf~	2012-10-29 07:41:41.167907799 +0100
-+++ libgcrypt-1.5.0/src/Makefile.am	2012-10-29 07:41:57.275130141 +0100
-@@ -27,6 +27,8 @@ bin_SCRIPTS = libgcrypt-config
- m4datadir = $(datadir)/aclocal
- m4data_DATA = libgcrypt.m4
- include_HEADERS = gcrypt.h gcrypt-module.h
-+pkgconfigdir = $(libdir)/pkgconfig
-+pkgconfig_DATA = libgcrypt.pc
- 
- lib_LTLIBRARIES = libgcrypt.la
- bin_PROGRAMS = dumpsexp hmac256
+-- 
+2.1.1
+
