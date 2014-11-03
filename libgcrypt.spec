@@ -15,11 +15,19 @@ Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
+
 Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
+Source1:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2.sig
+
 Patch0:		libgcrypt-1.2.0-libdir.patch
-Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
-Patch2:		libgcrypt-1.6.1-leak.patch
-Patch3:		libgcrypt-1.6.2-gcry_mpi_print-volatile-len-variable.patch
+Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch 
+Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
+# fix for memory leaks an other errors found by Coverity scan
+Patch9:		libgcrypt-1.6.1-leak.patch
+# use poll instead of select when gathering randomness
+Patch11:	libgcrypt-1.6.1-use-poll.patch
+# slight optimalization of mpicoder.c to silence Valgrind (#968288)
+Patch13:	libgcrypt-1.6.1-mpicoder-gccopt.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
@@ -80,10 +88,7 @@ This package contains files needed to develop applications using libgcrypt.
 %setup -q
 %apply_patches
 
-autoheader
-aclocal
-automake -a
-autoconf
+autoreconf -fiv
 
 %build
 %if %{with crosscompile}
@@ -96,14 +101,11 @@ pushd uclibc
 %uclibc_configure \
 	--enable-shared \
 	--enable-static \
-	--enable-m-guard
-
-%make CC=%{uclibc_cc}
+	--enable-m-guard \
+	--disable-amd64-as-feature-detection
+%make
 popd
 %endif
-
-# (tpg) clang workaround
-%global optflags %{optflags} -std=gnu89 -fheinous-gnu-extensions
 
 mkdir -p system
 pushd system
@@ -113,13 +115,19 @@ pushd system
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
-	--enable-m-guard
-
+	--enable-m-guard \
+	--disable-amd64-as-feature-detection
 %make
 popd
 
 %if %{with check}
 %check
+# (proyvind): some features (ie. amd64-as-feature-detection) breaks with
+# uClibc build, so we need to run checks for uClibc build as well..
+%if %{with uclibc}
+test -c /dev/random && LD_LIBRARY_PATH=$PWD/uclibc/src/.libs make -C uclibc check
+%endif
+
 test -c /dev/random && make -C system check
 %endif
 
@@ -153,11 +161,11 @@ ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/li
 %{_includedir}/gcrypt.h
 %{_libdir}/libgcrypt.a
 %{_libdir}/libgcrypt.so
-%{_mandir}/man1/hmac256*
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libgcrypt.a
 %{uclibc_root}%{_libdir}/libgcrypt.so
 %endif
 %{_libdir}/pkgconfig/libgcrypt.pc
 %{_datadir}/aclocal/libgcrypt.m4
+%{_mandir}/man1/hmac256.1*
 %{_infodir}/gcrypt.info*
