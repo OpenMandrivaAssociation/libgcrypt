@@ -4,7 +4,7 @@
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
-%bcond_with	check
+%bcond_without	check
 %bcond_without	uclibc
 %bcond_with	crosscompile
 
