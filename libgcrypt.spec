@@ -11,7 +11,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.6.3
-Release:	3
+Release:	4
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
