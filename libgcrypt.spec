@@ -5,13 +5,13 @@
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
 %bcond_without	check
-%bcond_without	uclibc
+%bcond_with	uclibc
 %bcond_with	crosscompile
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.6.3
-Release:	4
+Release:	5
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
