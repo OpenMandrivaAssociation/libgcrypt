@@ -1,6 +1,6 @@
-%define	major	20
-%define	libname	%mklibname gcrypt %{major}
-%define	devname	%mklibname gcrypt -d
+%define	major 20
+%define	libname %mklibname gcrypt %{major}
+%define	devname %mklibname gcrypt -d
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
@@ -10,8 +10,8 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.6.3
-Release:	5
+Version:	1.6.4
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
