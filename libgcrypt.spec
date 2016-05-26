@@ -5,13 +5,12 @@
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
 %bcond_without	check
-%bcond_with	uclibc
 %bcond_with	crosscompile
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.7.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -26,11 +25,6 @@ Patch13:	libgcrypt-1.6.1-mpicoder-gccopt.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-15
-BuildRequires:	uclibc-pth-devel
-BuildRequires:	uclibc-libgpg-error-devel
-%endif
 
 %description
 Libgcrypt is a general purpose cryptographic library
@@ -54,32 +48,6 @@ RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms),
 public key algorithms (RSA, ElGamal, DSA), large integer functions,
 random numbers and a lot of supporting functions.
 
-%if %{with uclibc}
-%package -n	uclibc-%{libname}
-Summary:	GNU Cryptographic library (uClibc build)
-Group:		System/Libraries
-
-%description -n	uclibc-%{libname}
-Libgcrypt is a general purpose cryptographic library
-based on the code from GNU Privacy Guard.  It provides functions for all
-cryptograhic building blocks: symmetric ciphers
-(AES,DES,Blowfish,CAST5,Twofish,Arcfour), hash algorithms (MD5,
-RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms),
-public key algorithms (RSA, ElGamal, DSA), large integer functions,
-random numbers and a lot of supporting functions.
-
-%package -n	uclibc-%{devname}
-Summary:	Development files for GNU cryptographic library
-Group:		Development/Other
-Requires:	uclibc-%{libname} = %{EVRD}
-Requires:	%{devname} = %{EVRD}
-Provides:	uclibc-%{name}-devel = %{EVRD}
-Conflicts:	%{devname} < 1.6.3-2
-
-%description -n	uclibc-%{devname}
-This package contains files needed to develop applications using libgcrypt.
-%endif
-
 %package -n	%{devname}
 Summary:	Development files for GNU cryptographic library
 Group:		Development/Other
@@ -99,21 +67,7 @@ autoreconf -fiv
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
-CONFIGURE_TOP="$PWD"
-%if %{with uclibc}
-mkdir -p uclibc
-pushd uclibc
-%uclibc_configure \
-	--enable-shared \
-	--enable-static \
-	--enable-m-guard \
-	--disable-amd64-as-feature-detection
-%make
-popd
-%endif
 
-mkdir -p system
-pushd system
 %configure \
 	--enable-shared \
 	--enable-static \
@@ -123,46 +77,20 @@ pushd system
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 %make
-popd
 
 %if %{with check}
 %check
-# (proyvind): some features (ie. amd64-as-feature-detection) breaks with
-# uClibc build, so we need to run checks for uClibc build as well..
-%if %{with uclibc}
-test -c /dev/random && LD_LIBRARY_PATH=$PWD/uclibc/src/.libs make -C uclibc check
-%endif
-
 test -c /dev/random && make -C system check
 %endif
 
 %install
-%if %{with uclibc}
-%makeinstall_std -C uclibc
-mkdir -p %{buildroot}%{uclibc_root}/%{_lib}
-mv %{buildroot}%{uclibc_root}%{_libdir}/libgcrypt.so.%{major}* %{buildroot}%{uclibc_root}/%{_lib}
-ln -srf %{buildroot}%{uclibc_root}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{uclibc_root}%{_libdir}/libgcrypt.so
-
-rm -r %{buildroot}%{uclibc_root}%{_libdir}/pkgconfig
-rm -r %{buildroot}%{uclibc_root}%{_bindir}
-%endif
-
-%makeinstall_std -C system
+%makeinstall_std
 mkdir -p %{buildroot}/%{_lib}
 mv %{buildroot}%{_libdir}/libgcrypt.so.%{major}* %{buildroot}/%{_lib}
 ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/libgcrypt.so
 
 %files -n %{libname}
 /%{_lib}/libgcrypt.so.%{major}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libname}
-%{uclibc_root}/%{_lib}/libgcrypt.so.%{major}*
-
-%files -n uclibc-%{devname}
-%{uclibc_root}%{_libdir}/libgcrypt.a
-%{uclibc_root}%{_libdir}/libgcrypt.so
-%endif
 
 %files -n %{devname}
 %doc AUTHORS README* NEWS THANKS TODO ChangeLog
