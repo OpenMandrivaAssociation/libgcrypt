@@ -79,8 +79,10 @@ ac_cv_sys_symbol_underscore=no
 %make
 
 %if %{with check}
+%ifnarch %{ix86}
 %check
 test -c /dev/random && make check
+%endif
 %endif
 
 %install
