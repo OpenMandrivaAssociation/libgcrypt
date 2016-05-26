@@ -80,7 +80,7 @@ ac_cv_sys_symbol_underscore=no
 
 %if %{with check}
 %check
-test -c /dev/random && make -C system check
+test -c /dev/random && make check
 %endif
 
 %install
