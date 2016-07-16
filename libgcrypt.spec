@@ -18,10 +18,14 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
+# (tpg) Patches from Fedora
+Patch9:		libgcrypt-1.6.1-leak.patch
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.6.1-use-poll.patch
 # slight optimalization of mpicoder.c to silence Valgrind (#968288)
 Patch13:	libgcrypt-1.6.1-mpicoder-gccopt.patch
+# use only urandom if /dev/random cannot be opened
+Patch24:	libgcrypt-1.6.3-urandom-only.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
