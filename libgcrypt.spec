@@ -9,19 +9,18 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.7.0
-Release:	2
+Version:	1.7.2
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
 Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
-Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch 
+Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
+# (tpg) Patches from Fedora
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.6.1-use-poll.patch
-# slight optimalization of mpicoder.c to silence Valgrind (#968288)
-Patch13:	libgcrypt-1.6.1-mpicoder-gccopt.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
