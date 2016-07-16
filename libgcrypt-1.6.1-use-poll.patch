@@ -1,15 +1,15 @@
-diff -up libgcrypt-1.6.1/random/rndlinux.c.use-poll libgcrypt-1.6.1/random/rndlinux.c
---- libgcrypt-1.6.1/random/rndlinux.c.use-poll	2014-02-28 15:17:55.294433915 +0100
-+++ libgcrypt-1.6.1/random/rndlinux.c	2014-02-28 15:34:52.505945274 +0100
+diff -Naur libgcrypt-1.7.2/random/rndlinux.c libgcrypt-1.7.2.tpg/random/rndlinux.c
+--- libgcrypt-1.7.2/random/rndlinux.c	2016-07-14 09:19:17.000000000 +0000
++++ libgcrypt-1.7.2.tpg/random/rndlinux.c	2016-07-16 13:13:45.616307308 +0000
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
  #include <fcntl.h>
 +#include <poll.h>
- #include "types.h"
- #include "g10lib.h"
- #include "rand-internal.h"
-@@ -199,9 +200,11 @@ _gcry_rndlinux_gather_random (void (*add
+ #if defined(__linux__) && defined(HAVE_SYSCALL)
+ # include <sys/syscall.h>
+ #endif
+@@ -191,9 +192,11 @@
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -23,7 +23,7 @@ diff -up libgcrypt-1.6.1/random/rndlinux.c.use-poll libgcrypt-1.6.1/random/rndli
  
        /* If we collected some bytes update the progress indicator.  We
           do this always and not just if the select timed out because
-@@ -215,33 +218,18 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -207,33 +210,18 @@
            any_need_entropy = 1;
          }
  
@@ -35,7 +35,13 @@ diff -up libgcrypt-1.6.1/random/rndlinux.c.use-poll libgcrypt-1.6.1/random/rndli
 -#ifdef FD_SETSIZE
 -      if (fd < FD_SETSIZE)
 -#endif
--        {
++      if ( !(rc=poll(&pfd, 1, delay)) )
++        {
++          delay = 3000; /* Use 3 seconds henceforth.  */
++          continue;
++        }
++        else if( rc == -1 )
+         {
 -          FD_ZERO(&rfds);
 -          FD_SET(fd, &rfds);
 -          tv.tv_sec = delay;
@@ -54,13 +60,6 @@ diff -up libgcrypt-1.6.1/random/rndlinux.c.use-poll libgcrypt-1.6.1/random/rndli
 -                              we have ever blocked.  */
 -              continue;
 -            }
-+      if ( !(rc=poll(&pfd, 1, delay)) )
-+        {
-+          delay = 3000; /* Use 3 seconds henceforth.  */
-+          continue;
-+        }
-+        else if( rc == -1 )
-+        {
 +          log_error ("poll() error: %s\n", strerror(errno));
 +          if (!delay)
 +            delay = 1000; /* Use 1 second if we encounter an error before
@@ -68,4 +67,4 @@ diff -up libgcrypt-1.6.1/random/rndlinux.c.use-poll libgcrypt-1.6.1/random/rndli
 +          continue;
          }
  
-       do
+       /* If we have a modern Linux kernel and we want to read from the

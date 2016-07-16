@@ -1,24 +1,24 @@
-diff -up libgcrypt-1.6.3/random/random-csprng.c.urandom-only libgcrypt-1.6.3/random/random-csprng.c
---- libgcrypt-1.6.3/random/random-csprng.c.urandom-only	2015-02-27 10:54:03.000000000 +0100
-+++ libgcrypt-1.6.3/random/random-csprng.c	2015-03-20 08:29:27.513113519 +0100
-@@ -1125,8 +1125,7 @@ getfnc_gather_random (void))(void (*)(co
+diff -Naur libgcrypt-1.7.2.tpg/random/random-csprng.c libgcrypt-1.7.2/random/random-csprng.c
+--- libgcrypt-1.7.2.tpg/random/random-csprng.c	2016-04-07 15:30:08.000000000 +0000
++++ libgcrypt-1.7.2/random/random-csprng.c	2016-07-16 13:18:25.326594220 +0000
+@@ -1108,8 +1108,7 @@
               enum random_origins, size_t, int);
  
  #if USE_RNDLINUX
 -  if ( !access (NAME_OF_DEV_RANDOM, R_OK)
 -       && !access (NAME_OF_DEV_URANDOM, R_OK))
-+  if (!access (NAME_OF_DEV_URANDOM, R_OK))
++  if ( !access (NAME_OF_DEV_URANDOM, R_OK))
      {
        fnc = _gcry_rndlinux_gather_random;
        return fnc;
-diff -up libgcrypt-1.6.3/random/rndlinux.c.urandom-only libgcrypt-1.6.3/random/rndlinux.c
---- libgcrypt-1.6.3/random/rndlinux.c.urandom-only	2015-03-20 08:36:13.472098269 +0100
-+++ libgcrypt-1.6.3/random/rndlinux.c	2015-03-20 08:36:43.765097131 +0100
-@@ -178,7 +178,11 @@ _gcry_rndlinux_gather_random (void (*add
+diff -Naur libgcrypt-1.7.2.tpg/random/rndlinux.c libgcrypt-1.7.2/random/rndlinux.c
+--- libgcrypt-1.7.2.tpg/random/rndlinux.c	2016-07-16 13:13:45.616307308 +0000
++++ libgcrypt-1.7.2/random/rndlinux.c	2016-07-16 13:19:20.693010608 +0000
+@@ -170,7 +170,11 @@
      {
        if (fd_random == -1)
          {
--          fd_random = open_device (NAME_OF_DEV_RANDOM, (ever_opened & 1), 1);
+-          fd_random = open_device (NAME_OF_DEV_RANDOM, (ever_opened & 1));
 +          /* We try to open /dev/random first but in case the open fails
 +             we gracefully retry with /dev/urandom. */
 +          fd_random = open_device (NAME_OF_DEV_RANDOM, 0, 0);
