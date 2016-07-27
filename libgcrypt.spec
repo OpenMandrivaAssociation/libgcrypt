@@ -18,7 +18,7 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
-Patch3:		libgcrypt-1.7.2-fix-noexec-stack-with-clang.patch
+#Patch3:		libgcrypt-1.7.2-fix-noexec-stack-with-clang.patch
 # (tpg) Patches from Fedora
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.6.1-use-poll.patch
@@ -64,9 +64,9 @@ This package contains files needed to develop applications using libgcrypt.
 autoreconf -fiv
 
 %build
-# (tpg) fix missing .note.GNU-stack section implies executable stack
-export CFLAGS="%{optflags} -std=gnu89"
-export CXXFLAGS="%{optflags} -std=gnu89"
+# (tpg) fix missing noexecstack
+export CC=gcc
+export CXX=g++
 
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
