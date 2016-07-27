@@ -64,6 +64,10 @@ This package contains files needed to develop applications using libgcrypt.
 autoreconf -fiv
 
 %build
+# (tpg) fix missing .note.GNU-stack section implies executable stack
+export CFLAGS="%{optflags} -std=gnu89"
+export CXXFLAGS="%{optflags} -std=gnu89"
+
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
