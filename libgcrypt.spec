@@ -10,7 +10,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.7.2
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -63,6 +63,10 @@ This package contains files needed to develop applications using libgcrypt.
 autoreconf -fiv
 
 %build
+#(tpg) somehow with clang a noexecstack is not recognized and this breaks many things :(
+export CC=gcc
+export CXX=g++
+
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
