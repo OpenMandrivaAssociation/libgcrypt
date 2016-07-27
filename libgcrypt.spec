@@ -65,8 +65,10 @@ autoreconf -fiv
 
 %build
 # (tpg) fix missing noexecstack
-export CC=gcc
-export CXX=g++
+#export CC=gcc
+#export CXX=g++
+%global ldflags %{ldflags} -Wl,-z,noexecstack
+
 
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
