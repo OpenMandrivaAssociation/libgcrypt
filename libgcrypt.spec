@@ -10,7 +10,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.7.3
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -18,6 +18,7 @@ Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
+Patch3:		libgcrypt-1.7.3-execstack.patch
 # (tpg) Patches from Fedora
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.6.1-use-poll.patch
@@ -60,13 +61,9 @@ This package contains files needed to develop applications using libgcrypt.
 %setup -q
 %apply_patches
 
-autoreconf -fiv
+./autogen.sh
 
 %build
-#(tpg) somehow with clang a noexecstack is not recognized and this breaks many things :(
-export CC=gcc
-export CXX=g++
-
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
