@@ -1,0 +1,15 @@
+--- libgcrypt-1.7.3/m4/noexecstack.m4.omv~	2016-08-20 18:11:34.103878971 +0200
++++ libgcrypt-1.7.3/m4/noexecstack.m4	2016-08-20 18:11:45.956523185 +0200
+@@ -35,10 +35,10 @@ cl_cv_as_noexecstack, [dnl
+   cat > conftest.c <<EOF
+ void foo() {}
+ EOF
+-  if AC_TRY_COMMAND([${CC} $CFLAGS $CPPFLAGS
++  if AC_TRY_COMMAND([${CC} $CFLAGS $CPPFLAGS -fno-lto
+                      -S -o conftest.s conftest.c >/dev/null]) \
+      && grep .note.GNU-stack conftest.s >/dev/null \
+-     && AC_TRY_COMMAND([${CCAS} $CCASFLAGS $CPPFLAGS -Wa,--noexecstack
++     && AC_TRY_COMMAND([${CCAS} $CCASFLAGS $CPPFLAGS -fno-lto -Wa,--noexecstack
+                        -c -o conftest.o conftest.s >/dev/null])
+   then
+     cl_cv_as_noexecstack=yes
