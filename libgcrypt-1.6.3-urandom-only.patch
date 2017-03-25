@@ -1,0 +1,29 @@
+diff -Naur libgcrypt-1.7.6/random/random-csprng.c libgcrypt-1.7.6.tpg/random/random-csprng.c
+--- libgcrypt-1.7.6/random/random-csprng.c	2016-11-12 09:08:34.000000000 +0000
++++ libgcrypt-1.7.6.tpg/random/random-csprng.c	2017-03-25 11:12:13.021321111 +0000
+@@ -1112,8 +1112,7 @@
+              enum random_origins, size_t, int);
+ 
+ #if USE_RNDLINUX
+-  if ( !access (NAME_OF_DEV_RANDOM, R_OK)
+-       && !access (NAME_OF_DEV_URANDOM, R_OK))
++  if (!access (NAME_OF_DEV_URANDOM, R_OK))
+     {
+       fnc = _gcry_rndlinux_gather_random;
+       return fnc;
+diff -Naur libgcrypt-1.7.6/random/rndlinux.c libgcrypt-1.7.6.tpg/random/rndlinux.c
+--- libgcrypt-1.7.6/random/rndlinux.c	2017-03-25 11:10:49.258791426 +0000
++++ libgcrypt-1.7.6.tpg/random/rndlinux.c	2017-03-25 11:13:50.119540572 +0000
+@@ -170,7 +170,11 @@
+     {
+       if (fd_random == -1)
+         {
+-          fd_random = open_device (NAME_OF_DEV_RANDOM, (ever_opened & 1));
++          /* We try to open /dev/random first but in case the open fails
++             we gracefully retry with /dev/urandom. */
++          fd_random = open_device (NAME_OF_DEV_RANDOM, 0);
++          if (fd_random == -1)
++            fd_random = open_device (NAME_OF_DEV_URANDOM, (ever_opened & 1));
+           ever_opened |= 1;
+         }
+       fd = fd_random;
