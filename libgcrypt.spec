@@ -20,7 +20,9 @@ Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
 # (tpg) Patches from Fedora
 # use poll instead of select when gathering randomness
-Patch11:	libgcrypt-1.6.1-use-poll.patch
+Patch11:	libgcrypt-1.7.6-use-poll.patch
+# use only urandom if /dev/random cannot be opened
+Patch12:	libgcrypt-1.6.3-urandom-only.patch
 
 BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
