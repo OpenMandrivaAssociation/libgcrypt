@@ -21,9 +21,9 @@ diff -Naur libgcrypt-1.7.6/random/rndlinux.c libgcrypt-1.7.6.tpg/random/rndlinux
 -          fd_random = open_device (NAME_OF_DEV_RANDOM, (ever_opened & 1));
 +          /* We try to open /dev/random first but in case the open fails
 +             we gracefully retry with /dev/urandom. */
-+          fd_random = open_device (NAME_OF_DEV_RANDOM, 0, 0);
++          fd_random = open_device (NAME_OF_DEV_RANDOM, 0);
 +          if (fd_random == -1)
-+            fd_random = open_device (NAME_OF_DEV_URANDOM, (ever_opened & 1), 1);
++            fd_random = open_device (NAME_OF_DEV_URANDOM, (ever_opened & 1));
            ever_opened |= 1;
          }
        fd = fd_random;
