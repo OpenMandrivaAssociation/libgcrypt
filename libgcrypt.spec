@@ -9,7 +9,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.7.5
+Version:	1.7.6
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
@@ -50,8 +50,8 @@ random numbers and a lot of supporting functions.
 %package -n	%{devname}
 Summary:	Development files for GNU cryptographic library
 Group:		Development/Other
-Requires:	%{libname} = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
 
 %description -n	%{devname}
 This package contains files needed to develop applications using libgcrypt.
