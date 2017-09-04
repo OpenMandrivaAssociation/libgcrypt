@@ -9,7 +9,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.7.8
+Version:	1.8.1
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
