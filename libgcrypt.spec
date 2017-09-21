@@ -19,6 +19,11 @@ Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
 # (tpg) Patches from Fedora
+# make FIPS hmac compatible with fipscheck - non upstreamable
+# update on soname bump
+Patch3:		libgcrypt-1.6.2-use-fipscheck.patch
+# fix tests in the FIPS mode, allow CAVS testing of DSA keygen
+Patch4:		libgcrypt-1.8.0-tests.patch
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.7.6-use-poll.patch
 # use only urandom if /dev/random cannot be opened
@@ -72,9 +77,6 @@ export CXX=g++
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
-# (tpg) try to fix
-# fips.c:596: error: undefined reference to 'dladdr'
-%global ldflags %ldflags -ldl
 
 %configure \
 	--enable-shared \
