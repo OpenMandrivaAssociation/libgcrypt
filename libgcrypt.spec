@@ -86,7 +86,7 @@ ac_cv_sys_symbol_underscore=no
 	--enable-static \
 	--disable-O-flag-munging \
 	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
-	--enable-hmac-binary-check \
+	--disable-hmac-binary-check \
 %ifnarch x86_64
 	--disable-sse41-support
 %endif
