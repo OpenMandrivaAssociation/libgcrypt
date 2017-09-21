@@ -76,11 +76,19 @@ ac_cv_sys_symbol_underscore=no
 %configure \
 	--enable-shared \
 	--enable-static \
+	--disable-O-flag-munging \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--enable-hmac-binary-check \
+%ifnarch x86_64
+	--disable-sse41-support
+%endif
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
+
+sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
 %make
 
 %if %{with check}
