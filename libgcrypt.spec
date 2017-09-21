@@ -72,6 +72,9 @@ export CXX=g++
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
+# (tpg) try to fix
+# fips.c:596: error: undefined reference to 'dladdr'
+%global ldflags %ldflags -ldl
 
 %configure \
 	--enable-shared \
