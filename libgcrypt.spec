@@ -88,7 +88,7 @@ ac_cv_sys_symbol_underscore=no
 	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
 	--disable-hmac-binary-check \
 %ifnarch x86_64
-	--disable-sse41-support
+	--disable-sse41-support \
 %endif
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
