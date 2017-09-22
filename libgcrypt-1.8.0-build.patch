@@ -1,0 +1,34 @@
+diff -up libgcrypt-1.8.0/tests/t-secmem.c.build libgcrypt-1.8.0/tests/t-secmem.c
+--- libgcrypt-1.8.0/tests/t-secmem.c.build	2017-01-18 15:24:25.000000000 +0100
++++ libgcrypt-1.8.0/tests/t-secmem.c	2017-08-16 15:12:48.948224849 +0200
+@@ -25,6 +25,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <errno.h>
++#include <unistd.h>
+ 
+ #define PGM "t-secmem"
+ 
+@@ -37,17 +38,21 @@ test_secmem (void)
+ {
+   void *a[28];
+   void *b;
++  long oversize;
+   int i;
+ 
+   memset (a, 0, sizeof a);
+ 
++  oversize = sysconf (_SC_PAGESIZE);
++  oversize = oversize <= 16384 ? 2048 : oversize - (16384 - 2048);
++
+   /* Allocating 28*512=14k should work in the default 16k pool even
+    * with extrem alignment requirements.  */
+   for (i=0; i < DIM(a); i++)
+     a[i] = gcry_xmalloc_secure (512);
+ 
+   /* Allocating another 2k should fail for the default 16k pool.  */
+-  b = gcry_malloc_secure (2048);
++  b = gcry_malloc_secure (oversize);
+   if (b)
+     fail ("allocation did not fail as expected\n");
+ 

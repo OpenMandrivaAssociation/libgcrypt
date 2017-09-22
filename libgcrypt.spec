@@ -9,7 +9,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.7.8
+Version:	1.8.1
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
@@ -19,6 +19,11 @@ Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
 # (tpg) Patches from Fedora
+# make FIPS hmac compatible with fipscheck - non upstreamable
+# update on soname bump
+Patch3:		libgcrypt-1.6.2-use-fipscheck.patch
+# fix tests in the FIPS mode, allow CAVS testing of DSA keygen
+Patch4:		libgcrypt-1.8.0-tests.patch
 # use poll instead of select when gathering randomness
 Patch11:	libgcrypt-1.7.6-use-poll.patch
 # use only urandom if /dev/random cannot be opened
@@ -72,15 +77,26 @@ export CXX=g++
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
+# (tpg) try to fix
+# fips.c:596: error: undefined reference to 'dladdr'
+%global ldflags %ldflags -ldl
 
 %configure \
 	--enable-shared \
 	--enable-static \
+	--disable-O-flag-munging \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--disable-hmac-binary-check \
+%ifnarch x86_64
+	--disable-sse41-support \
+%endif
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
+
+sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
 %make
 
 %if %{with check}

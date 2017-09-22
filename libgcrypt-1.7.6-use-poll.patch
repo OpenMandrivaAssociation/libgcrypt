@@ -1,6 +1,6 @@
-diff -up libgcrypt-1.7.6/random/rndlinux.c.use-poll libgcrypt-1.7.6/random/rndlinux.c
---- libgcrypt-1.7.6/random/rndlinux.c.use-poll	2017-01-30 14:20:13.665662981 +0100
-+++ libgcrypt-1.7.6/random/rndlinux.c	2017-01-30 14:27:45.957027214 +0100
+diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndlinux.c
+--- libgcrypt-1.8.0/random/rndlinux.c.use-poll	2017-06-24 13:34:29.000000000 +0200
++++ libgcrypt-1.8.0/random/rndlinux.c	2017-08-15 15:37:37.604629377 +0200
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
@@ -9,7 +9,7 @@ diff -up libgcrypt-1.7.6/random/rndlinux.c.use-poll libgcrypt-1.7.6/random/rndli
  #if defined(__linux__) && defined(HAVE_SYSCALL)
  # include <sys/syscall.h>
  #endif
-@@ -211,9 +212,8 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -216,9 +217,8 @@ _gcry_rndlinux_gather_random (void (*add
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -20,7 +20,7 @@ diff -up libgcrypt-1.7.6/random/rndlinux.c.use-poll libgcrypt-1.7.6/random/rndli
  
        /* If we have a modern Linux kernel and we want to read from the
         * the non-blocking /dev/urandom, we first try to use the new
-@@ -269,33 +269,22 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -276,36 +276,25 @@ _gcry_rndlinux_gather_random (void (*add
            any_need_entropy = 1;
          }
  
@@ -35,13 +35,19 @@ diff -up libgcrypt-1.7.6/random/rndlinux.c.use-poll libgcrypt-1.7.6/random/rndli
 +      pfd.fd = fd;
 +      pfd.events = POLLIN;
 +
-+      if ( !(rc=poll(&pfd, 1, delay)) )
++      _gcry_pre_syscall ();
++      rc = poll(&pfd, 1, delay);
++      _gcry_post_syscall ();
++      if (!rc)
          {
 -          FD_ZERO(&rfds);
 -          FD_SET(fd, &rfds);
 -          tv.tv_sec = delay;
 -          tv.tv_usec = delay? 0 : 100000;
--          if ( !(rc=select(fd+1, &rfds, NULL, NULL, &tv)) )
+-          _gcry_pre_syscall ();
+-          rc = select (fd+1, &rfds, NULL, NULL, &tv);
+-          _gcry_post_syscall ();
+-          if (!rc)
 -            {
 -              any_need_entropy = 1;
 -              delay = 3; /* Use 3 seconds henceforth.  */
@@ -68,4 +74,4 @@ diff -up libgcrypt-1.7.6/random/rndlinux.c.use-poll libgcrypt-1.7.6/random/rndli
 +          continue;
          }
  
-       /* Read from the device.  */
+       do
