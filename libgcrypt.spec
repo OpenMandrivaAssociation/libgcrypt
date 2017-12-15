@@ -87,7 +87,7 @@ ac_cv_sys_symbol_underscore=no
 	--enable-shared \
 	--enable-static \
 	--disable-O-flag-munging \
-	--enable-pubkey-ciphers='dsa elgamal rsa ecc cast5 aes twofish serpent rfc2268 seed camellia idea salsa20 gost28147 chacha20'
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
 	--disable-hmac-binary-check \
 %ifnarch x86_64
 	--disable-sse41-support \
