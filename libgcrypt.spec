@@ -2,6 +2,8 @@
 %define	libname %mklibname gcrypt %{major}
 %define	devname %mklibname gcrypt -d
 
+%global optflags %{optflags} -Ofast
+
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
 %bcond_without	check
@@ -9,7 +11,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.8.1
+Version:	1.8.2
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
@@ -85,7 +87,7 @@ ac_cv_sys_symbol_underscore=no
 	--enable-shared \
 	--enable-static \
 	--disable-O-flag-munging \
-	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc cast5 aes twofish serpent rfc2268 seed camellia idea salsa20 gost28147 chacha20'
 	--disable-hmac-binary-check \
 %ifnarch x86_64
 	--disable-sse41-support \
