@@ -1,8 +1,8 @@
-%define	major 20
-%define	libname %mklibname gcrypt %{major}
-%define	devname %mklibname gcrypt -d
+%define major 20
+%define libname %mklibname gcrypt %{major}
+%define devname %mklibname gcrypt -d
 
-%global optflags %{optflags} -Ofast
+%global optflags %{optflags} -Ofast -falign-functions=32 -fno-math-errno -fno-trapping-math
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
@@ -12,7 +12,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.2
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -30,8 +30,6 @@ Patch4:		libgcrypt-1.8.0-tests.patch
 Patch11:	libgcrypt-1.7.6-use-poll.patch
 # use only urandom if /dev/random cannot be opened
 Patch12:	libgcrypt-1.6.3-urandom-only.patch
-
-BuildRequires:	pth-devel
 BuildRequires:	pkgconfig(gpg-error)
 
 %description
@@ -43,11 +41,11 @@ RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms),
 public key algorithms (RSA, ElGamal, DSA), large integer functions,
 random numbers and a lot of supporting functions.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	GNU Cryptographic library
 Group:		System/Libraries
 
-%description -n	%{libname}
+%description -n %{libname}
 Libgcrypt is a general purpose cryptographic library
 based on the code from GNU Privacy Guard.  It provides functions for all
 cryptograhic building blocks: symmetric ciphers
@@ -56,13 +54,13 @@ RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms),
 public key algorithms (RSA, ElGamal, DSA), large integer functions,
 random numbers and a lot of supporting functions.
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	Development files for GNU cryptographic library
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
 
-%description -n	%{devname}
+%description -n %{devname}
 This package contains files needed to develop applications using libgcrypt.
 
 %prep
