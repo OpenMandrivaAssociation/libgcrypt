@@ -101,7 +101,7 @@ sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib
 %make
 
 %if %{with check}
-%ifnarch %{ix86}
+%ifnarch aarch64
 %check
 test -c /dev/random && make check
 %endif
