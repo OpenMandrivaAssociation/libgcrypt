@@ -12,7 +12,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.2
-Release:	2
+Release:	3
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -59,6 +59,7 @@ Summary:	Development files for GNU cryptographic library
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
+Requires:	pkgconfig(gpg-error)
 
 %description -n %{devname}
 This package contains files needed to develop applications using libgcrypt.
