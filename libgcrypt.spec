@@ -12,7 +12,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.3
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -88,7 +88,7 @@ ac_cv_sys_symbol_underscore=no
 	--disable-O-flag-munging \
 	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
 	--disable-hmac-binary-check \
-%ifnarch x86_64
+%ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
 %if %{with crosscompile}
