@@ -1,0 +1,12 @@
+diff -Naur libgcrypt-1.8.3/m4/noexecstack.m4 libgcrypt-1.8.3.tpg/m4/noexecstack.m4
+--- libgcrypt-1.8.3/m4/noexecstack.m4	2017-11-23 18:16:58.000000000 +0000
++++ libgcrypt-1.8.3.tpg/m4/noexecstack.m4	2018-10-13 03:25:22.636813482 +0000
+@@ -38,7 +38,7 @@
+   if AC_TRY_COMMAND([${CC} $CFLAGS $CPPFLAGS
+                      -S -o conftest.s conftest.c >/dev/null]) \
+      && grep .note.GNU-stack conftest.s >/dev/null \
+-     && AC_TRY_COMMAND([${CCAS} $CCASFLAGS $CPPFLAGS -Wa,--noexecstack
++     && AC_TRY_COMMAND([${CCAS} $ASFLAGS -Wa,--noexecstack
+                        -c -o conftest.o conftest.s >/dev/null])
+   then
+     cl_cv_as_noexecstack=yes

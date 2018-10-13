@@ -6,13 +6,13 @@
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
-%bcond_without	check
-%bcond_with	crosscompile
+%bcond_without check
+%bcond_with crosscompile
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.3
-Release:	2
+Release:	3
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -30,6 +30,8 @@ Patch4:		libgcrypt-1.8.0-tests.patch
 Patch11:	libgcrypt-1.7.6-use-poll.patch
 # use only urandom if /dev/random cannot be opened
 Patch12:	libgcrypt-1.6.3-urandom-only.patch
+# (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
+Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
 BuildRequires:	pkgconfig(gpg-error)
 
 %description
@@ -65,16 +67,10 @@ Requires:	pkgconfig(gpg-error)
 This package contains files needed to develop applications using libgcrypt.
 
 %prep
-%setup -q
-%apply_patches
-
+%autoetup -p1
 autoreconf -fiv
 
 %build
-#(tpg) somehow with clang a noexecstack is not recognized and this breaks many things :(
-export CC=gcc
-export CXX=g++
-
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
@@ -88,17 +84,18 @@ ac_cv_sys_symbol_underscore=no
 	--disable-O-flag-munging \
 	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
 	--disable-hmac-binary-check \
+	--disable-large-data-tests \
+	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
-	--enable-m-guard \
-	--disable-amd64-as-feature-detection
+	--enable-m-guard
 
 sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
-%make
+%make_build
 
 %if %{with check}
 %ifnarch aarch64
@@ -108,7 +105,7 @@ test -c /dev/random && make check
 %endif
 
 %install
-%makeinstall_std
+%make_install
 mkdir -p %{buildroot}/%{_lib}
 mv %{buildroot}%{_libdir}/libgcrypt.so.%{major}* %{buildroot}/%{_lib}
 ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/libgcrypt.so
