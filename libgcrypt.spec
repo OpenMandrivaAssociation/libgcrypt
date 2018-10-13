@@ -32,6 +32,8 @@ Patch11:	libgcrypt-1.7.6-use-poll.patch
 Patch12:	libgcrypt-1.6.3-urandom-only.patch
 # (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
 Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
+# (tpg) fix build with LLVM/clang
+Patch14:	libgcrypt-1.8.3-fix-clang-optimization.patch
 BuildRequires:	pkgconfig(gpg-error)
 
 %description
