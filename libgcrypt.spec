@@ -67,7 +67,7 @@ Requires:	pkgconfig(gpg-error)
 This package contains files needed to develop applications using libgcrypt.
 
 %prep
-%autoetup -p1
+%autosetup -p1
 autoreconf -fiv
 
 %build
