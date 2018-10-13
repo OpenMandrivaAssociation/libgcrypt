@@ -78,6 +78,11 @@ ac_cv_sys_symbol_underscore=no
 # fips.c:596: error: undefined reference to 'dladdr'
 %global ldflags %ldflags -ldl
 
+if as --help | grep -q execstack; then
+  # the object files do not require an executable stack
+  export CCAS="%{__cc} -c -Wa,--noexecstack"
+fi
+
 %configure \
 	--enable-shared \
 	--enable-static \
@@ -92,7 +97,8 @@ ac_cv_sys_symbol_underscore=no
 %if %{with crosscompile}
 	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
-	--enable-m-guard
+	--enable-m-guard \
+	--disable-amd64-as-feature-detection
 
 sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
 %make_build
