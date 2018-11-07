@@ -1,6 +1,6 @@
-diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndlinux.c
---- libgcrypt-1.8.0/random/rndlinux.c.use-poll	2017-06-24 13:34:29.000000000 +0200
-+++ libgcrypt-1.8.0/random/rndlinux.c	2017-08-15 15:37:37.604629377 +0200
+diff -Naur libgcrypt-1.8.4/random/rndlinux.c libgcrypt-1.8.4.tpg/random/rndlinux.c
+--- libgcrypt-1.8.4/random/rndlinux.c	2018-10-26 11:50:20.000000000 +0000
++++ libgcrypt-1.8.4.tpg/random/rndlinux.c	2018-11-07 20:47:41.435971030 +0000
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
@@ -9,7 +9,7 @@ diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndli
  #if defined(__linux__) && defined(HAVE_SYSCALL)
  # include <sys/syscall.h>
  #endif
-@@ -216,9 +217,8 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -241,9 +242,8 @@
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -18,9 +18,9 @@ diff -up libgcrypt-1.8.0/random/rndlinux.c.use-poll libgcrypt-1.8.0/random/rndli
        int rc;
 +      struct pollfd pfd;
  
-       /* If we have a modern Linux kernel and we want to read from the
-        * the non-blocking /dev/urandom, we first try to use the new
-@@ -276,36 +276,25 @@ _gcry_rndlinux_gather_random (void (*add
+       /* If we have a modern Linux kernel, we first try to use the new
+        * getrandom syscall.  That call guarantees that the kernel's
+@@ -300,36 +300,25 @@
            any_need_entropy = 1;
          }
  

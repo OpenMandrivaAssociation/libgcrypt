@@ -17,7 +17,6 @@ License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
 Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
-Source1:	random.conf
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
@@ -29,8 +28,6 @@ Patch3:		libgcrypt-1.6.2-use-fipscheck.patch
 Patch4:		libgcrypt-1.8.0-tests.patch
 # use poll instead of select when gathering randomness
 Patch11:	https://src.fedoraproject.org/cgit/rpms/libgcrypt.git/plain/libgcrypt-1.8.0-use-poll.patch
-# use only urandom if /dev/random cannot be opened
-Patch12:	https://src.fedoraproject.org/cgit/rpms/libgcrypt.git/plain/libgcrypt-1.8.3-getrandom.patch
 # (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
 Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
 # (tpg) fix build with LLVM/clang
@@ -71,7 +68,6 @@ This package contains files needed to develop applications using libgcrypt.
 
 %prep
 %autosetup -p1
-
 autoreconf -fiv
 
 %build
@@ -120,12 +116,7 @@ mkdir -p %{buildroot}/%{_lib}
 mv %{buildroot}%{_libdir}/libgcrypt.so.%{major}* %{buildroot}/%{_lib}
 ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/libgcrypt.so
 
-mkdir -p -m 755 %{buildroot}%{_sysconfdir}/gcrypt
-install -m644 %{SOURCE7} %{buildroot}%{_sysconfdir}/gcrypt/random.conf
-
 %files -n %{libname}
-%dir /etc/gcrypt
-%config(noreplace) /etc/gcrypt/random.conf
 /%{_lib}/libgcrypt.so.%{major}*
 
 %files -n %{devname}
