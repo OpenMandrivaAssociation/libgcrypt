@@ -1,2 +1,4 @@
-sources:
+removed_sources:
   libgcrypt-1.8.1.tar.bz2: dd35f00da45602afe81e01f4d60c40bbdd826fe6
+sources:
+  libgcrypt-1.8.4.tar.bz2: 4a8ef9db6922f3a31992aca5640b4198a69b58fc
