@@ -2,7 +2,7 @@
 %define libname %mklibname gcrypt %{major}
 %define devname %mklibname gcrypt -d
 
-%global optflags %{optflags} -Ofast -falign-functions=32 -fno-math-errno -fno-trapping-math
+%global optflags %{optflags} -O3 -falign-functions=32 -fno-math-errno -fno-trapping-math
 
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
@@ -12,7 +12,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.4
-Release:	2
+Release:	3
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
