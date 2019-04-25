@@ -78,6 +78,10 @@ This package contains files needed to develop applications using libgcrypt.
 autoreconf -fiv
 
 %build
+%ifarch %{arm}
+export CC=gcc
+export CXX=g++
+%endif
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
