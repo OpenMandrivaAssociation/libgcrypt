@@ -40,6 +40,9 @@ Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
 # (tpg) fix build with LLVM/clang
 Patch14:	libgcrypt-1.8.3-fix-clang-optimization.patch
 BuildRequires:	pkgconfig(gpg-error)
+%ifarch %{arm}
+BuildRequires:	gcc
+%endif
 
 %description
 Libgcrypt is a general purpose cryptographic library
