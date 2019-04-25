@@ -98,7 +98,6 @@ CXXFLAGS="%{optflags} -fprofile-instr-generate" \
 FFLAGS="$CFLAGS" \
 FCFLAGS="$CFLAGS" \
 LDFLAGS="%{ldflags} -fprofile-instr-generate" \
-
 %configure \
 	--enable-shared \
 	--enable-static \
