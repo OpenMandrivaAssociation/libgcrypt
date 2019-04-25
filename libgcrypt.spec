@@ -9,10 +9,17 @@
 %bcond_without check
 %bcond_with crosscompile
 
+# (tpg) enable PGO build
+%ifnarch riscv64
+%bcond_without pgo
+%else
+%bcond_with pgo
+%endif
+
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.8.4
-Release:	3
+Release:	4
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -83,6 +90,47 @@ if as --help | grep -q execstack; then
   export CCAS="%{__cc} -c -Wa,--noexecstack"
 fi
 
+%if %{with pgo}
+export LLVM_PROFILE_FILE=%{name}-%p.profile.d
+export LD_LIBRARY_PATH="$(pwd)"
+CFLAGS="%{optflags} -fprofile-instr-generate" \
+CXXFLAGS="%{optflags} -fprofile-instr-generate" \
+FFLAGS="$CFLAGS" \
+FCFLAGS="$CFLAGS" \
+LDFLAGS="%{ldflags} -fprofile-instr-generate" \
+
+%configure \
+	--enable-shared \
+	--enable-static \
+	--disable-O-flag-munging \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--disable-hmac-binary-check \
+	--disable-large-data-tests \
+	--enable-noexecstack \
+%ifnarch %{x86_64}
+	--disable-sse41-support \
+%endif
+%if %{with crosscompile}
+	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
+%endif
+	--enable-m-guard \
+	--disable-amd64-as-feature-detection
+
+sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
+%make_build
+
+test -c /dev/urandom && make check
+
+unset LD_LIBRARY_PATH
+unset LLVM_PROFILE_FILE
+llvm-profdata merge --output=%{name}.profile *.profile.d
+
+make clean
+
+CFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
+CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
+LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
+%endif
 %configure \
 	--enable-shared \
 	--enable-static \
