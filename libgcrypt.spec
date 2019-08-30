@@ -18,14 +18,13 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.8.4
-Release:	4
+Version:	1.8.5
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
-Source0:	ftp://ftp.gnupg.org/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
+Source0:	https://www.gnupg.org/ftp/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
-Patch1:		libgcrypt-1.6.2-add-pkgconfig-support.patch
 Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
 # (tpg) Patches from Fedora
 # make FIPS hmac compatible with fipscheck - non upstreamable
