@@ -36,7 +36,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.8.7
+Version:	1.9.1
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
@@ -50,7 +50,8 @@ Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
 # update on soname bump
 Patch3:		libgcrypt-1.6.2-use-fipscheck.patch
 # fix tests in the FIPS mode, allow CAVS testing of DSA keygen
-Patch4:		libgcrypt-1.8.0-tests.patch
+#Patch4:		libgcrypt-1.8.0-tests.patch
+Patch5:		libgcrypt-1.9.1-i686-compile.patch
 # use poll instead of select when gathering randomness
 Patch11:	https://src.fedoraproject.org/cgit/rpms/libgcrypt.git/plain/libgcrypt-1.8.0-use-poll.patch
 # (tpg) try to fix noexecstack with clang. This is very important to have noexecstack

@@ -1,7 +1,7 @@
-diff -up libgcrypt-1.6.2/src/fips.c.use-fipscheck libgcrypt-1.6.2/src/fips.c
---- libgcrypt-1.6.2/src/fips.c.use-fipscheck	2014-08-21 14:50:39.000000000 +0200
-+++ libgcrypt-1.6.2/src/fips.c	2014-09-26 11:42:20.999588282 +0200
-@@ -578,23 +578,50 @@ run_random_selftests (void)
+diff -up libgcrypt-1.9.0/src/fips.c.4~ libgcrypt-1.9.0/src/fips.c
+--- libgcrypt-1.9.0/src/fips.c.4~	2021-01-18 18:34:30.000000000 +0100
++++ libgcrypt-1.9.0/src/fips.c	2021-01-20 17:26:42.561504317 +0100
+@@ -592,23 +592,50 @@ run_random_selftests (void)
    return !!err;
  }
  
@@ -57,7 +57,7 @@ diff -up libgcrypt-1.6.2/src/fips.c.use-fipscheck libgcrypt-1.6.2/src/fips.c
                                   key, strlen (key));
        if (dlen < 0)
          err = gpg_error_from_syserror ();
-@@ -602,7 +629,7 @@ check_binary_integrity (void)
+@@ -616,7 +643,7 @@ check_binary_integrity (void)
          err = gpg_error (GPG_ERR_INTERNAL);
        else
          {
@@ -66,7 +66,7 @@ diff -up libgcrypt-1.6.2/src/fips.c.use-fipscheck libgcrypt-1.6.2/src/fips.c
            if (!fname)
              err = gpg_error_from_syserror ();
            else
-@@ -611,7 +638,7 @@ check_binary_integrity (void)
+@@ -625,7 +652,7 @@ check_binary_integrity (void)
                char *p;
  
                /* Prefix the basename with a dot.  */
@@ -75,15 +75,15 @@ diff -up libgcrypt-1.6.2/src/fips.c.use-fipscheck libgcrypt-1.6.2/src/fips.c
                p = strrchr (fname, '/');
                if (p)
                  p++;
-diff -up libgcrypt-1.6.2/src/Makefile.in.use-fipscheck libgcrypt-1.6.2/src/Makefile.in
---- libgcrypt-1.6.2/src/Makefile.in.use-fipscheck	2014-08-21 15:14:08.000000000 +0200
-+++ libgcrypt-1.6.2/src/Makefile.in	2014-09-26 11:41:13.271059281 +0200
-@@ -449,7 +449,7 @@ libgcrypt_la_LIBADD = $(gcrypt_res) \
+diff -up libgcrypt-1.9.0/src/Makefile.in.4~ libgcrypt-1.9.0/src/Makefile.in
+--- libgcrypt-1.9.0/src/Makefile.in.4~	2021-01-20 17:26:42.561504317 +0100
++++ libgcrypt-1.9.0/src/Makefile.in	2021-01-20 17:27:32.108631994 +0100
+@@ -534,7 +534,7 @@ libgcrypt_la_LIBADD = $(gcrypt_res) \
  	../cipher/libcipher.la \
  	../random/librandom.la \
  	../mpi/libmpi.la \
--	../compat/libcompat.la  $(GPG_ERROR_LIBS)
-+	../compat/libcompat.la  $(GPG_ERROR_LIBS) -ldl
+-	../compat/libcompat.la $(DL_LIBS) $(GPG_ERROR_LIBS)
++	../compat/libcompat.la $(DL_LIBS) $(GPG_ERROR_LIBS) -ldl
  
  dumpsexp_SOURCES = dumpsexp.c
  dumpsexp_CFLAGS = $(arch_gpg_error_cflags)

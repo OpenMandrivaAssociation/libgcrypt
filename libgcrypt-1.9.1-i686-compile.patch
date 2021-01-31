@@ -1,0 +1,13 @@
+diff -up libgcrypt-1.9.1/cipher/Makefile.am.omv~ libgcrypt-1.9.1/cipher/Makefile.am
+diff -up libgcrypt-1.9.1/cipher/sha512.c.omv~ libgcrypt-1.9.1/cipher/sha512.c
+--- libgcrypt-1.9.1/cipher/sha512.c.omv~	2021-01-31 04:24:45.843489789 +0100
++++ libgcrypt-1.9.1/cipher/sha512.c	2021-01-31 04:26:25.899705602 +0100
+@@ -1313,3 +1313,8 @@ gcry_md_spec_t _gcry_digest_spec_sha512_
+     sizeof (SHA512_CONTEXT),
+     run_selftests
+   };
++
++
++#ifdef USE_SSSE3_I386
++#include "sha512-ssse3-i386.c"
++#endif

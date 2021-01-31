@@ -1,15 +1,15 @@
-diff -Naur libgcrypt-1.8.4/random/rndlinux.c libgcrypt-1.8.4.tpg/random/rndlinux.c
---- libgcrypt-1.8.4/random/rndlinux.c	2018-10-26 11:50:20.000000000 +0000
-+++ libgcrypt-1.8.4.tpg/random/rndlinux.c	2018-11-07 20:47:41.435971030 +0000
+diff -up libgcrypt-1.9.1/random/rndlinux.c.5~ libgcrypt-1.9.1/random/rndlinux.c
+--- libgcrypt-1.9.1/random/rndlinux.c.5~	2021-01-28 13:53:52.000000000 +0100
++++ libgcrypt-1.9.1/random/rndlinux.c	2021-01-30 19:00:24.463481881 +0100
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
  #include <fcntl.h>
 +#include <poll.h>
- #if defined(__linux__) && defined(HAVE_SYSCALL)
- # include <sys/syscall.h>
- #endif
-@@ -241,9 +242,8 @@
+ #if defined(__APPLE__) && defined(__MACH__)
+ extern int getentropy (void *buf, size_t buflen) __attribute__ ((weak_import));
+ #define HAVE_GETENTROPY
+@@ -243,9 +244,8 @@ _gcry_rndlinux_gather_random (void (*add
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -18,9 +18,9 @@ diff -Naur libgcrypt-1.8.4/random/rndlinux.c libgcrypt-1.8.4.tpg/random/rndlinux
        int rc;
 +      struct pollfd pfd;
  
-       /* If we have a modern Linux kernel, we first try to use the new
-        * getrandom syscall.  That call guarantees that the kernel's
-@@ -300,36 +300,25 @@
+       /* If we have a modern operating system, we first try to use the new
+        * getentropy function.  That call guarantees that the kernel's
+@@ -304,36 +304,25 @@ _gcry_rndlinux_gather_random (void (*add
            any_need_entropy = 1;
          }
  
