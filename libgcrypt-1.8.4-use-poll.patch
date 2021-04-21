@@ -1,15 +1,15 @@
-diff -up libgcrypt-1.9.1/random/rndlinux.c.5~ libgcrypt-1.9.1/random/rndlinux.c
---- libgcrypt-1.9.1/random/rndlinux.c.5~	2021-01-28 13:53:52.000000000 +0100
-+++ libgcrypt-1.9.1/random/rndlinux.c	2021-01-30 19:00:24.463481881 +0100
+diff -up libgcrypt-1.8.4/random/rndlinux.c.use-poll libgcrypt-1.8.4/random/rndlinux.c
+--- libgcrypt-1.8.4/random/rndlinux.c.use-poll	2018-10-26 13:50:20.000000000 +0200
++++ libgcrypt-1.8.4/random/rndlinux.c	2018-11-20 15:51:56.760669058 +0100
 @@ -32,6 +32,7 @@
  #include <string.h>
  #include <unistd.h>
  #include <fcntl.h>
 +#include <poll.h>
  #if defined(__APPLE__) && defined(__MACH__)
- extern int getentropy (void *buf, size_t buflen) __attribute__ ((weak_import));
- #define HAVE_GETENTROPY
-@@ -243,9 +244,8 @@ _gcry_rndlinux_gather_random (void (*add
+ #include <Availability.h>
+ #ifdef __MAC_10_11
+@@ -241,9 +242,8 @@ _gcry_rndlinux_gather_random (void (*add
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -20,7 +20,7 @@ diff -up libgcrypt-1.9.1/random/rndlinux.c.5~ libgcrypt-1.9.1/random/rndlinux.c
  
        /* If we have a modern operating system, we first try to use the new
         * getentropy function.  That call guarantees that the kernel's
-@@ -304,36 +304,25 @@ _gcry_rndlinux_gather_random (void (*add
+@@ -300,36 +300,25 @@ _gcry_rndlinux_gather_random (void (*add
            any_need_entropy = 1;
          }
  
