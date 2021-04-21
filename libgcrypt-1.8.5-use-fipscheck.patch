@@ -1,7 +1,7 @@
-diff -up libgcrypt-1.9.0/src/fips.c.4~ libgcrypt-1.9.0/src/fips.c
---- libgcrypt-1.9.0/src/fips.c.4~	2021-01-18 18:34:30.000000000 +0100
-+++ libgcrypt-1.9.0/src/fips.c	2021-01-20 17:26:42.561504317 +0100
-@@ -592,23 +592,50 @@ run_random_selftests (void)
+diff -up libgcrypt-1.8.5/src/fips.c.use-fipscheck libgcrypt-1.8.5/src/fips.c
+--- libgcrypt-1.8.5/src/fips.c.use-fipscheck	2017-11-23 19:16:58.000000000 +0100
++++ libgcrypt-1.8.5/src/fips.c	2020-04-23 10:18:36.235764741 +0200
+@@ -581,23 +581,50 @@ run_random_selftests (void)
    return !!err;
  }
  
@@ -57,7 +57,7 @@ diff -up libgcrypt-1.9.0/src/fips.c.4~ libgcrypt-1.9.0/src/fips.c
                                   key, strlen (key));
        if (dlen < 0)
          err = gpg_error_from_syserror ();
-@@ -616,7 +643,7 @@ check_binary_integrity (void)
+@@ -605,7 +632,7 @@ check_binary_integrity (void)
          err = gpg_error (GPG_ERR_INTERNAL);
        else
          {
@@ -66,7 +66,7 @@ diff -up libgcrypt-1.9.0/src/fips.c.4~ libgcrypt-1.9.0/src/fips.c
            if (!fname)
              err = gpg_error_from_syserror ();
            else
-@@ -625,7 +652,7 @@ check_binary_integrity (void)
+@@ -614,7 +641,7 @@ check_binary_integrity (void)
                char *p;
  
                /* Prefix the basename with a dot.  */
@@ -75,15 +75,3 @@ diff -up libgcrypt-1.9.0/src/fips.c.4~ libgcrypt-1.9.0/src/fips.c
                p = strrchr (fname, '/');
                if (p)
                  p++;
-diff -up libgcrypt-1.9.0/src/Makefile.in.4~ libgcrypt-1.9.0/src/Makefile.in
---- libgcrypt-1.9.0/src/Makefile.in.4~	2021-01-20 17:26:42.561504317 +0100
-+++ libgcrypt-1.9.0/src/Makefile.in	2021-01-20 17:27:32.108631994 +0100
-@@ -534,7 +534,7 @@ libgcrypt_la_LIBADD = $(gcrypt_res) \
- 	../cipher/libcipher.la \
- 	../random/librandom.la \
- 	../mpi/libmpi.la \
--	../compat/libcompat.la $(DL_LIBS) $(GPG_ERROR_LIBS)
-+	../compat/libcompat.la $(DL_LIBS) $(GPG_ERROR_LIBS) -ldl
- 
- dumpsexp_SOURCES = dumpsexp.c
- dumpsexp_CFLAGS = $(arch_gpg_error_cflags)
