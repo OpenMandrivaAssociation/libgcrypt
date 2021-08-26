@@ -1,7 +1,7 @@
 diff -uraN libgcrypt-1.9.4/random/jitterentropy-base.c omv-libgcrypt-1.9.4/random/jitterentropy-base.c
 --- libgcrypt-1.9.4/random/jitterentropy-base.c	2021-08-22 14:57:34.000000000 +0200
-+++ omv-libgcrypt-1.9.4/random/jitterentropy-base.c	2021-08-26 02:01:15.698893655 +0200
-@@ -50,6 +50,9 @@
++++ omv-libgcrypt-1.9.4/random/jitterentropy-base.c	2021-08-26 12:47:59.639114492 +0200
+@@ -50,15 +50,19 @@
   */
  
  #undef _FORTIFY_SOURCE
@@ -11,7 +11,9 @@ diff -uraN libgcrypt-1.9.4/random/jitterentropy-base.c omv-libgcrypt-1.9.4/rando
  #ifdef __OPTIMIZE__
  #pragma GCC optimize ("O0")
  #endif
-@@ -58,7 +61,7 @@
++#endif
+ 
+ #include "jitterentropy.h"
  
  #ifndef CONFIG_CRYPTO_CPU_JITTERENTROPY_STAT
   /* only check optimization in a compilation for real work */
