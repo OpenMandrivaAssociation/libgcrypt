@@ -9,6 +9,10 @@
 
 %global optflags %{optflags} -O3 -falign-functions=32 -fno-math-errno -fno-trapping-math
 
+# (tpg) try to fix
+# fips.c:596: error: undefined reference to 'dladdr'
+%global ldflags %{ldflags} -ldl
+
 # disable tests by default, no /dev/random feed, no joy
 #(proyvind): conditionally reenabled it with a check for /dev/random first
 %bcond_without check
@@ -28,16 +32,12 @@
 %endif
 
 # (tpg) enable PGO build
-%ifnarch riscv64
 %bcond_without pgo
-%else
-%bcond_with pgo
-%endif
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.9.4
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -143,16 +143,13 @@ autoreconf -fiv
 %if %{with crosscompile}
 ac_cv_sys_symbol_underscore=no
 %endif
-# (tpg) try to fix
-# fips.c:596: error: undefined reference to 'dladdr'
-%global ldflags %ldflags -ldl
 
 if as --help | grep -q execstack; then
   # the object files do not require an executable stack
   export CCAS="%{__cc} -c -Wa,--noexecstack"
 fi
 
-export CONFIGURE_TOP="`pwd`"
+export CONFIGURE_TOP="$(pwd)"
 %if %{with compat32}
 mkdir build32
 cd build32
@@ -179,13 +176,11 @@ cd ..
 mkdir build
 cd build
 %if %{with pgo}
-export LLVM_PROFILE_FILE=%{name}-%p.profile.d
 export LD_LIBRARY_PATH="$(pwd)"
-CFLAGS="%{optflags} -fprofile-instr-generate -flto" \
-CXXFLAGS="%{optflags} -fprofile-instr-generate -flto" \
-FFLAGS="$CFLAGS" \
-FCFLAGS="$CFLAGS" \
-LDFLAGS="%{ldflags} -fprofile-instr-generate -flto" \
+
+CFLAGS="%{optflags} -flto -fprofile-generate -mllvm -vp-counters-per-site=32" \
+CXXFLAGS="%{optflags} -flto -fprofile-generate" \
+LDFLAGS="%{build_ldflags} -flto -fprofile-generate" \
 %configure \
 	--enable-shared \
 	--enable-static \
@@ -209,14 +204,15 @@ sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib
 test -c /dev/urandom && make check
 
 unset LD_LIBRARY_PATH
-unset LLVM_PROFILE_FILE
-llvm-profdata merge --output=%{name}.profile *.profile.d
+llvm-profdata merge --output=%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
+PROFDATA="$(realpath %{name}-llvm.profdata)"
+rm -f *.profraw
 
 make clean
 
-CFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile) -flto" \
-CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile) -flto" \
-LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile) -flto" \
+CFLAGS="%{optflags} -flto -fprofile-use=$PROFDATA" \
+CXXFLAGS="%{optflags} -flto -fprofile-use=$PROFDATA" \
+LDFLAGS="%{build_ldflags} -flto -fprofile-use=$PROFDATA" \
 %endif
 %configure \
 	--enable-shared \
@@ -268,8 +264,8 @@ ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/li
 %{_libdir}/libgcrypt.so
 %{_libdir}/pkgconfig/libgcrypt.pc
 %{_datadir}/aclocal/libgcrypt.m4
-%{_mandir}/man1/hmac256.1*
-%{_infodir}/gcrypt.info*
+%doc %{_mandir}/man1/hmac256.1*
+%doc %{_infodir}/gcrypt.info*
 
 %files -n %{staticname}
 %{_libdir}/libgcrypt.a
