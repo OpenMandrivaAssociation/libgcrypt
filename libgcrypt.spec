@@ -36,22 +36,15 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.9.4
-Release:	2
+Version:	1.10.1
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
 Source0:	https://www.gnupg.org/ftp/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.8.5-detect-m32.patch
-#Patch2:		libgcrypt-1.6.1-fix-a-couple-of-tests.patch
-# (tpg) Patches from Fedora
-# make FIPS hmac compatible with fipscheck - non upstreamable
-# update on soname bump
-Patch3:		https://src.fedoraproject.org/cgit/rpms/libgcrypt.git/plain/libgcrypt-1.8.5-use-fipscheck.patch
 Patch5:		libgcrypt-1.9.1-i686-compile.patch
-# use poll instead of select when gathering randomness
-Patch11:	https://src.fedoraproject.org/cgit/rpms/libgcrypt.git/plain/libgcrypt-1.8.4-use-poll.patch
 # (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
 Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
 # (tpg) fix build with LLVM/clang
@@ -250,12 +243,9 @@ test -c /dev/urandom && make -C build check
 %endif
 
 %make_install -C build
-mkdir -p %{buildroot}/%{_lib}
-mv %{buildroot}%{_libdir}/libgcrypt.so.%{major}* %{buildroot}/%{_lib}
-ln -srf %{buildroot}/%{_lib}/libgcrypt.so.%{major}.*.* %{buildroot}%{_libdir}/libgcrypt.so
 
 %files -n %{libname}
-/%{_lib}/libgcrypt.so.%{major}*
+%{_libdir}/libgcrypt.so.%{major}*
 
 %files -n %{devname}
 %doc AUTHORS README* NEWS THANKS TODO ChangeLog

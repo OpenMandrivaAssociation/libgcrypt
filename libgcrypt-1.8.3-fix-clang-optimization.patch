@@ -1,24 +1,27 @@
-diff -uraN libgcrypt-1.9.4/random/jitterentropy-base.c omv-libgcrypt-1.9.4/random/jitterentropy-base.c
---- libgcrypt-1.9.4/random/jitterentropy-base.c	2021-08-22 14:57:34.000000000 +0200
-+++ omv-libgcrypt-1.9.4/random/jitterentropy-base.c	2021-08-26 12:47:59.639114492 +0200
-@@ -50,15 +50,19 @@
+diff -Naur libgcrypt-1.10.1/random/jitterentropy-base.c libgcrypt-1.10.1.tpg/random/jitterentropy-base.c
+--- libgcrypt-1.10.1/random/jitterentropy-base.c	2022-01-25 21:55:44.000000000 +0000
++++ libgcrypt-1.10.1.tpg/random/jitterentropy-base.c	2022-05-26 21:09:57.367250186 +0000
+@@ -29,6 +29,14 @@
+  * DAMAGE.
   */
  
- #undef _FORTIFY_SOURCE
 +#ifdef __clang__
 +#pragma clang optimize off
 +#else
- #ifdef __OPTIMIZE__
- #pragma GCC optimize ("O0")
- #endif
++ #ifdef __OPTIMIZE__
++ #pragma GCC optimize ("O0")
++ #endif
 +#endif
- 
++
  #include "jitterentropy.h"
  
- #ifndef CONFIG_CRYPTO_CPU_JITTERENTROPY_STAT
-  /* only check optimization in a compilation for real work */
-- #ifdef __OPTIMIZE__
-+ #if defined(__OPTIMIZE__) && !defined(__clang__)
-   #error "The CPU Jitter random number generator must not be compiled with optimizations. See documentation. Use the compiler switch -O0 for compiling jitterentropy-base.c."
-  #endif
+ #include "jitterentropy-base.h"
+@@ -54,7 +62,7 @@
+  * None of the following should be altered
+  ***************************************************************************/
+ 
+-#ifdef __OPTIMIZE__
++#if defined(__OPTIMIZE__) && !defined(__clang__)
+  #error "The CPU Jitter random number generator must not be compiled with optimizations. See documentation. Use the compiler switch -O0 for compiling jitterentropy.c."
  #endif
+ 
