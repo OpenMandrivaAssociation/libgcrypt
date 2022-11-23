@@ -52,6 +52,7 @@ Patch14:	libgcrypt-1.8.3-fix-clang-optimization.patch
 BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
+BuildRequires:	libc6
 %endif
 
 %description
