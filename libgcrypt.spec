@@ -13,11 +13,6 @@
 # fips.c:596: error: undefined reference to 'dladdr'
 %global ldflags %{ldflags} -ldl
 
-# disable tests by default, no /dev/random feed, no joy
-#(proyvind): conditionally reenabled it with a check for /dev/random first
-%bcond_without check
-%bcond_with crosscompile
-
 # libgcrypt is used by gnutls and libxslt, both of which in turn
 # are used by wine.
 %ifarch %{x86_64}
@@ -32,7 +27,13 @@
 %endif
 
 # (tpg) enable PGO build
+%if %{cross_compiling}
+%bcond_with pgo
+%bcond_with check
+%else
 %bcond_without pgo
+%bcond_without check
+%endif
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
@@ -134,10 +135,6 @@ statically.
 autoreconf -fiv
 
 %build
-%if %{with crosscompile}
-ac_cv_sys_symbol_underscore=no
-%endif
-
 if as --help | grep -q execstack; then
   # the object files do not require an executable stack
   export CCAS="%{__cc} -c -Wa,--noexecstack"
@@ -157,9 +154,6 @@ cd build32
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
-%endif
-%if %{with crosscompile}
-	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
@@ -185,9 +179,6 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-generate" \
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
-%endif
-%if %{with crosscompile}
-	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
@@ -218,9 +209,6 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-use=$PROFDATA" \
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
-%endif
-%if %{with crosscompile}
-	--with-gpg-error-prefix=$SYSROOT/%{_prefix} \
 %endif
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
