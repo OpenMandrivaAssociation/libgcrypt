@@ -8,10 +8,7 @@
 %global _disable_lto 1
 
 %global optflags %{optflags} -O3 -falign-functions=32 -fno-math-errno -fno-trapping-math
-
-# (tpg) try to fix
-# fips.c:596: error: undefined reference to 'dladdr'
-%global ldflags %{ldflags} -ldl
+%global build_ldflags %{build_ldflags} -Wl,--undefined-version
 
 # libgcrypt is used by gnutls and libxslt, both of which in turn
 # are used by wine.
@@ -37,7 +34,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.10.2
+Version:	1.10.3
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
