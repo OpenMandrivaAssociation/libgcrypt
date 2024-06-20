@@ -1,11 +1,8 @@
 %define major 20
-%define libname %mklibname gcrypt %{major}
+%define oldlibname %mklibname gcrypt 20
+%define libname %mklibname gcrypt
 %define devname %mklibname gcrypt -d
 %define staticname %mklibname gcrypt -d -s
-
-# Workaround for gcc -m32. No harm done because we re-add -flto
-# for the 64bit build.
-%global _disable_lto 1
 
 %global optflags %{optflags} -O3 -falign-functions=32 -fno-math-errno -fno-trapping-math
 %global build_ldflags %{build_ldflags} -Wl,--undefined-version
@@ -18,7 +15,8 @@
 %bcond_with compat32
 %endif
 %if %{with compat32}
-%define lib32name libgcrypt%{major}
+%define oldlib32name libgcrypt%{major}
+%define lib32name libgcrypt
 %define dev32name libgcrypt-devel
 %define static32name libgcrypt-static-devel
 %endif
@@ -35,7 +33,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.11.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		http://www.gnupg.org/
@@ -51,6 +49,7 @@ BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
 BuildRequires:	libc6
+%rename %{oldlib32name}
 %endif
 
 %description
@@ -65,6 +64,8 @@ random numbers and a lot of supporting functions.
 %package -n %{libname}
 Summary:	GNU Cryptographic library
 Group:		System/Libraries
+# renamed after 5.0
+%rename %{oldlibname}
 
 %description -n %{libname}
 Libgcrypt is a general purpose cryptographic library
@@ -94,9 +95,12 @@ This package contains files needed to link applications using libgcrypt
 statically.
 
 %if %{with compat32}
+%if "%{lib32name}" != "%{name}"
 %package -n %{lib32name}
 Summary:	GNU Cryptographic library (32-bit)
 Group:		System/Libraries
+# renamed after 5.0
+%rename %{oldlib32name}
 
 %description -n %{lib32name}
 Libgcrypt is a general purpose cryptographic library
@@ -106,6 +110,7 @@ cryptograhic building blocks: symmetric ciphers
 RIPE-MD160, SHA-1, TIGER-192), MACs (HMAC for all hash algorithms),
 public key algorithms (RSA, ElGamal, DSA), large integer functions,
 random numbers and a lot of supporting functions.
+%endif
 
 %package -n %{dev32name}
 Summary:	Development files for GNU cryptographic library (32-bit)
