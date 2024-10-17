@@ -36,7 +36,7 @@ Version:	1.11.0
 Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
-Url:		http://www.gnupg.org/
+Url:		https://www.gnupg.org/
 Source0:	https://www.gnupg.org/ftp/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 Patch0:		libgcrypt-1.2.0-libdir.patch
 Patch1:		libgcrypt-1.8.5-detect-m32.patch
