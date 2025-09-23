@@ -32,25 +32,30 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.11.0
-Release:	2
+Version:	1.11.2
+Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		https://www.gnupg.org/
 Source0:	https://www.gnupg.org/ftp/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
-Patch0:		libgcrypt-1.2.0-libdir.patch
-Patch1:		libgcrypt-1.8.5-detect-m32.patch
-Patch5:		libgcrypt-1.9.1-i686-compile.patch
-# (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
-Patch13:	libgcrypt-1.8.3-enable-noexecstack.patch
-# (tpg) fix build with LLVM/clang
-Patch14:	libgcrypt-1.8.3-fix-clang-optimization.patch
+# CMake file that used to be shipped with libxslt, but really belongs with libgcrypt
+Source1:	https://gitlab.gnome.org/GNOME/libxslt/-/raw/master/FindGcrypt.cmake
 BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
 BuildRequires:	libc6
 %rename %{oldlib32name}
 %endif
+
+%patchlist
+libgcrypt-1.2.0-libdir.patch
+libgcrypt-1.8.5-detect-m32.patch
+libgcrypt-1.9.1-i686-compile.patch
+# (tpg) try to fix noexecstack with clang. This is very important to have noexecstack
+libgcrypt-1.8.3-enable-noexecstack.patch
+# (tpg) fix build with LLVM/clang
+libgcrypt-1.8.3-fix-clang-optimization.patch
+libgcrypt-1.11.2-workaround-__thread-check.patch
 
 %description
 Libgcrypt is a general purpose cryptographic library
@@ -235,35 +240,8 @@ test -c /dev/urandom && make -C build check
 
 %make_install -C build
 
-# (tpg) strip LTO from "LLVM IR bitcode" files
-check_convert_bitcode() {
-    printf '%s\n' "Checking for LLVM IR bitcode"
-    llvm_file_name=$(realpath ${1})
-    llvm_file_type=$(file ${llvm_file_name})
-
-    if printf '%s\n' "${llvm_file_type}" | grep -q "LLVM IR bitcode"; then
-# recompile without LTO
-    clang %{optflags} -fno-lto -Wno-unused-command-line-argument -x ir ${llvm_file_name} -c -o ${llvm_file_name}
-    elif printf '%s\n' "${llvm_file_type}" | grep -q "current ar archive"; then
-    printf '%s\n' "Unpacking ar archive ${llvm_file_name} to check for LLVM bitcode components."
-# create archive stage for objects
-    archive_stage=$(mktemp -d)
-    archive=${llvm_file_name}
-    cd ${archive_stage}
-    ar x ${archive}
-    for archived_file in $(find -not -type d); do
-        check_convert_bitcode ${archived_file}
-        printf '%s\n' "Repacking ${archived_file} into ${archive}."
-        ar r ${archive} ${archived_file}
-    done
-    ranlib ${archive}
-    cd ..
-    fi
-}
-
-for i in $(find %{buildroot} -type f -name "*.[ao]"); do
-    check_convert_bitcode ${i}
-done
+mkdir -p %{buildroot}%{_libdir}/cmake/%{name}
+cp %{S:1} %{buildroot}%{_libdir}/cmake/%{name}/
 
 %files -n %{libname}
 %{_libdir}/libgcrypt.so.%{major}*
@@ -274,6 +252,7 @@ done
 %{_includedir}/gcrypt.h
 %{_libdir}/libgcrypt.so
 %{_libdir}/pkgconfig/libgcrypt.pc
+%{_libdir}/cmake/%{name}
 %{_datadir}/aclocal/libgcrypt.m4
 %doc %{_mandir}/man1/hmac256.1*
 %doc %{_infodir}/gcrypt.info*
