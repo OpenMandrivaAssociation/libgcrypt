@@ -40,6 +40,11 @@ Url:		https://www.gnupg.org/
 Source0:	https://www.gnupg.org/ftp/gcrypt/libgcrypt/%{name}-%{version}.tar.bz2
 # CMake file that used to be shipped with libxslt, but really belongs with libgcrypt
 Source1:	https://gitlab.gnome.org/GNOME/libxslt/-/raw/master/FindGcrypt.cmake
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
