@@ -195,7 +195,7 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-generate" \
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 
-sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
+[ -e libtool ] && sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
 %make_build
 
 test -c /dev/urandom && make check
@@ -225,7 +225,7 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-use=$PROFDATA" \
 	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 
-sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
+[ -e libtool ] && sed -i -e '/^sys_lib_dlsearch_path_spec/s,/lib /usr/lib,/usr/lib /lib64 /usr/lib64 /lib,g' libtool
 %make_build
 
 %if %{with check}
