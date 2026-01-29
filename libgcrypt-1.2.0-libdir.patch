@@ -1,6 +1,6 @@
-diff -up libgcrypt-1.9.0/src/libgcrypt-config.in.1~ libgcrypt-1.9.0/src/libgcrypt-config.in
---- libgcrypt-1.9.0/src/libgcrypt-config.in.1~	2018-10-24 09:45:45.000000000 +0200
-+++ libgcrypt-1.9.0/src/libgcrypt-config.in	2021-01-20 17:26:24.438002217 +0100
+diff -up libgcrypt-1.12.0/src/libgcrypt-config.in.1~ libgcrypt-1.12.0/src/libgcrypt-config.in
+--- libgcrypt-1.12.0/src/libgcrypt-config.in.1~	2025-09-23 15:14:23.000000000 +0200
++++ libgcrypt-1.12.0/src/libgcrypt-config.in	2026-01-29 16:45:52.432865002 +0100
 @@ -16,7 +16,6 @@ prefix="@prefix@"
  exec_prefix="@exec_prefix@"
  version="@PACKAGE_VERSION@"
@@ -14,7 +14,7 @@ diff -up libgcrypt-1.9.0/src/libgcrypt-config.in.1~ libgcrypt-1.9.0/src/libgcryp
      libs_final="$libs"
  
 -    # Set up `libdirs'.
--    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/lib"; then
+-    if test "x$libdir" != "x/usr/lib" && test "x$libdir" != "x/lib"; then
 -	libdirs="-L$libdir"
 -    fi
 -
