@@ -33,7 +33,7 @@
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
 Version:	1.12.0
-Release:	1
+Release:	2
 License:	LGPLv2+
 Group:		System/Libraries
 Url:		https://www.gnupg.org/
@@ -45,6 +45,8 @@ BuildRequires:	automake
 BuildRequires:	libtool-base
 BuildRequires:	slibtool
 BuildRequires:	make
+# Just for the dependency generator to pick up Source1
+BuildRequires:	cmake
 BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
