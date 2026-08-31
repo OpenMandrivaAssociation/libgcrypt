@@ -50,6 +50,7 @@ BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
 BuildRequires:	devel(libgpg-error)
 BuildRequires:	libc6
+BuildRequires:	atomic-devel
 %rename %{oldlib32name}
 %endif
 
