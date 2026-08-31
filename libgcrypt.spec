@@ -51,13 +51,16 @@ BuildRequires:	pkgconfig(gpg-error)
 BuildRequires:	devel(libgpg-error)
 BuildRequires:	libc6
 BuildRequires:	atomic-devel
-# clang 23 -m32 links compiler-rt, not libgcc. The i386 builtins live
+# clang 23 -m32 links compiler-rt, not libgcc.a. The i386 builtins live
 # in the cross-i686 clang package. That package also drops i386-*.cfg
 # (--sysroot /usr/i686-…), so the matching libc CRT and binutils
 # usr/triplet sysroot symlinks (for lld) have to come along.
+# clang still passes -lgcc_s for the unwinder; that .so is in the
+# sysroot from the cross gcc package, not from native lib64gcc-devel.
 BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
 BuildRequires:	cross-i686-openmandriva-linux-gnu-libc
 BuildRequires:	cross-i686-openmandriva-linux-gnu-binutils
+BuildRequires:	cross-i686-openmandriva-linux-gnu-gcc
 %rename %{oldlib32name}
 %endif
 
