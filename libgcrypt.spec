@@ -48,17 +48,11 @@ BuildRequires:	make
 BuildRequires:	cmake
 BuildRequires:	pkgconfig(gpg-error)
 %if %{with compat32}
-# clang -m32 reads i386-*.cfg (--sysroot /usr/i686-openmandriva-linux-gnu).
-# binutils ships the usr -> ./ symlink so lld can resolve the absolute
-# paths in the sysroot's libc.so linker script.
-BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
-BuildRequires:	cross-i686-openmandriva-linux-gnu-libc
-BuildRequires:	cross-i686-openmandriva-linux-gnu-gcc
-BuildRequires:	cross-i686-openmandriva-linux-gnu-binutils
-BuildRequires:	cross-i686-openmandriva-linux-gnu-kernel-headers
 BuildRequires:	devel(libgpg-error)
 BuildRequires:	libc6
 BuildRequires:	atomic-devel
+# clang -m32 still links GCC's 32-bit crtbegin/libgcc (and libgcc_s.so)
+BuildRequires:	lib64gcc-devel
 %rename %{oldlib32name}
 %endif
 
