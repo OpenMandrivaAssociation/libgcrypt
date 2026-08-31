@@ -32,7 +32,7 @@
 
 Summary:	GNU Cryptographic library
 Name:		libgcrypt
-Version:	1.12.2
+Version:	1.12.3
 Release:	1
 License:	LGPLv2+
 Group:		System/Libraries
@@ -164,14 +164,13 @@ LDFLAGS="%{build_ldflags} -L/usr/lib" \
 	--enable-shared \
 	--enable-static \
 	--disable-O-flag-munging \
-	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc kyber dilithium' \
 	--disable-hmac-binary-check \
 	--disable-large-data-tests \
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
-	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 %make_build LIBTOOL=rclibtool
 cd ..
@@ -189,19 +188,36 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-generate" \
 	--enable-shared \
 	--enable-static \
 	--disable-O-flag-munging \
-	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc kyber dilithium' \
 	--disable-hmac-binary-check \
 	--disable-large-data-tests \
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
-	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 
 %make_build LIBTOOL=rclibtool
 
-test -c /dev/urandom && make check
+# make check is a poor PGO trainer: it intentionally spends most of its
+# time on error paths, unused algorithms, and tiny inputs. Train on the
+# in-tree throughput benches for common TLS / OpenPGP / GnuPG paths.
+if test -c /dev/urandom; then
+	export LLVM_PROFILE_FILE="$(pwd)/pgo-%p.profraw"
+	%make_build -C tests bench-slope benchmark LIBTOOL=rclibtool
+	# bench-slope accepts a single class per invocation
+	./tests/bench-slope --repetitions 8 cipher AES AES192 AES256 CHACHA20
+	./tests/bench-slope --repetitions 8 hash SHA256 SHA512 SHA384 SHA1 SHA3-256 SHA3-512 BLAKE2B_256
+	./tests/bench-slope --repetitions 8 mac HMAC_SHA256 HMAC_SHA512 POLY1305
+	./tests/bench-slope --repetitions 8 pk RSA-2048 RSA-3072
+	./tests/bench-slope --repetitions 8 ecc Ed25519 X25519 NIST-P256 NIST-P384
+	./tests/bench-slope --repetitions 8 pq ML-KEM-768 ML-DSA-65
+	./tests/benchmark --large-buffers --cipher-repetitions 8 cipher AES AES256 CHACHA20
+	./tests/benchmark --hash-repetitions 8 md SHA256 SHA512 SHA3-256
+	./tests/benchmark --mac-repetitions 8 mac HMAC_SHA256
+	./tests/benchmark --pk-count 40 rsa
+	./tests/benchmark --pk-count 40 ecc
+fi
 
 unset LD_LIBRARY_PATH
 llvm-profdata merge --output=%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
@@ -218,14 +234,13 @@ LDFLAGS="%{build_ldflags} -flto -fprofile-use=$PROFDATA" \
 	--enable-shared \
 	--enable-static \
 	--disable-O-flag-munging \
-	--enable-pubkey-ciphers='dsa elgamal rsa ecc' \
+	--enable-pubkey-ciphers='dsa elgamal rsa ecc kyber dilithium' \
 	--disable-hmac-binary-check \
 	--disable-large-data-tests \
 	--enable-noexecstack \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
-	--enable-m-guard \
 	--disable-amd64-as-feature-detection
 
 %make_build LIBTOOL=rclibtool
