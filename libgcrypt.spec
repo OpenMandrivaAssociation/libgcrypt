@@ -174,7 +174,8 @@ LDFLAGS="%{build_ldflags} -L/usr/lib" \
 %ifnarch %{x86_64}
 	--disable-sse41-support \
 %endif
-	--disable-amd64-as-feature-detection
+	--disable-amd64-as-feature-detection \
+	|| { echo '===== build32 config.log ====='; cat config.log; exit 1; }
 %make_build LIBTOOL=rclibtool
 cd ..
 %endif
